@@ -21,9 +21,12 @@ if (process.env.NODE_ENV === "production") {
   app.use("/", express.static("client/build"));
 
   app.get("*", (req, res) => {
-    res.send("Hello world"); //File(path.resolve(__dirname, 'client/build/index.html'));
-  });
+    res.status(404).send("Route not found");
+  }); 
 }
+app.get("/api/*", (req, res) => {
+  res.status(405).send("GET method not supported for this route");
+});
 
 app.get("/", (req, res) => res.send("Hello World!"));
 

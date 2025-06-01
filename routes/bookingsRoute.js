@@ -2,45 +2,23 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/bookingModel");
 const Car = require("../models/carModel");
-const { v4: uuidv4 } = require("uuid");
-const stripe = require("stripe")(
-  "pk_test_51P54JmSC0iWqf4s2yaODdffAkkDD3dd0LguTPozl8Suu5dN5rKTMBQKSda7F9mpgVd1ojHGS6Dyy47pozt0zSFTt00xR8DaQWN"
-);
 
 router.post("/bookcar", async (req, res) => {
-  const { token } = req.body;
   try {
-    // const customer = await stripe.customers.create({
-    //   email: token.email,
-    //   source: token.id,
-    // });
-
-    // const payment = await stripe.charges.create(
-    //   {
-    //     amount: req.body.totalAmount * 100,
-    //     currency: "inr",
-    //     customer: customer.id,
-    //     receipt_email: token.email
-    //   },
-    //   {
-    //     idempotencyKey: uuidv4(),
-
-    //   }
-    // );
-
-    // if (payment) {
-    req.body.transactionId = token.id; //payment.source.id;
+    req.body.transactionId = "Payment on PickUP"; // Placeholder instead of payment ID
     const newbooking = new Booking(req.body);
     await newbooking.save();
-    const car = await Car.findOne({ _id: req.body.car });
-    console.log(req.body.car);
-    car.bookedTimeSlots.push(req.body.bookedTimeSlots);
 
+    const car = await Car.findOne({ _id: req.body.car });
+    car.bookedTimeSlots.push(req.body.bookedTimeSlots);
     await car.save();
-    res.send("Your booking is successfull");
-    // } else {
-    //   return res.status(400).json(error);
-    // }
+
+    res.send({
+      message: "Your booking is successful!",
+      requiredAmount: req.body.totalAmount,
+      address: req.body.address,
+    });
+
   } catch (error) {
     console.log(error);
     return res.status(400).json(error);

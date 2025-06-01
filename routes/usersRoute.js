@@ -23,11 +23,12 @@ router.post("/login", async (req, res) => {
 
 router.post("/register", async (req, res) => {
 
-    console.log(req.body)
+    // console.log(req.body)
+    const { username, password } = req.body
 
     try {
-        const newuser = new User(req.body)
-        await newuser.save()
+        const newUser = new User({ username, password });
+        await newUser.save()
         res.send('User registered successfully')
     } catch (error) {
         return res.status(400).json(error);
